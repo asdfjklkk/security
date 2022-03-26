@@ -24,6 +24,7 @@ func (obj Aes) Encrypt(byteArray []byte) (returnValue []byte, returnError error)
 		returnError = err
 		return
 	}
+	byteArray = Pkcs7Padding(byteArray, c.BlockSize())
 	cfb := cipher.NewCFBEncrypter(c, []byte(obj.CommonIv))
 	cipherText := make([]byte, len(byteArray))
 	cfb.XORKeyStream(cipherText, byteArray)
@@ -49,13 +50,13 @@ func (obj Aes) Decrypt(byteArray []byte) (returnValue []byte, returnError error)
 	return
 }
 
-func PKCS7Padding(ciphertext []byte, blockSize int) []byte {
+func Pkcs7Padding(ciphertext []byte, blockSize int) []byte {
 	padding := blockSize - len(ciphertext)%blockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(ciphertext, padtext...)
 }
 
-func PKCS7UnPadding(origData []byte) []byte {
+func Pkcs7UnPadding(origData []byte) []byte {
 	length := len(origData)
 	unpadding := int(origData[length-1])
 	return origData[:(length - unpadding)]
