@@ -24,7 +24,6 @@ func (obj Aes) Encrypt(byteArray []byte) (returnValue []byte, returnError error)
 		returnError = err
 		return
 	}
-	byteArray = Pkcs7Padding(byteArray, c.BlockSize())
 	cfb := cipher.NewCFBEncrypter(c, []byte(obj.CommonIv))
 	cipherText := make([]byte, len(byteArray))
 	cfb.XORKeyStream(cipherText, byteArray)
